@@ -1,20 +1,46 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import AddUser from './components/AddUser';
+import UserList from './components/UserList';
 
-export default function App() {
+function App() {
+  const [refresh, setRefresh] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+
+  const refreshUsers = () => {
+    console.log("Refreshing users...");
+    setRefresh(prev => !prev);
+  };
+
+  const handleEditUser = (user) => {
+    console.log("Editing user:", user);
+    setEditingUser(user);
+  };
+
+  const handleClearEditingUser = () => {
+    console.log("Clearing editing user");
+    setEditingUser(null);
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <View style={{ padding: 20 }}>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
+          {editingUser ? 'Cập Nhật Người Dùng' : 'Thêm Người Dùng'}
+        </Text>
+        <AddUser 
+          refreshUsers={refreshUsers} 
+          editingUser={editingUser} 
+          setEditingUser={handleClearEditingUser} 
+        />
+        <UserList 
+          refresh={refresh} 
+          onEditUser={handleEditUser} 
+        />
+      </View>
+    </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
